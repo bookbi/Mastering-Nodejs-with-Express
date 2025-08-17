@@ -28,8 +28,18 @@ console.log(data);
 // Creating a server
 http
   .createServer((req, res) => {
-    res.writeHead(200);
-    res.write(os.uptime().toString());
+    switch (req.url) {
+      case '/api/data':
+        res.setHeader('Content-Type', 'application/json');
+        res.writeHead(200);
+        res.write(JSON.stringify(data));
+        break;
+      case '/api/online':
+        res.setHeader('Content-Type', 'text/plain');
+        res.writeHead(200);
+        res.write(os.uptime().toString());
+        break;
+    }
     res.end();
   })
   .listen(3000);

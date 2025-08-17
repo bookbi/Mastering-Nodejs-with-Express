@@ -14,7 +14,7 @@
 
 3. Take time to understand their differences
 
-### Creating a sever
+### Creating a sever 
 
 1. In the `index.js` file:
    - Create a server using the `http` module. It must listen to port `3000`
