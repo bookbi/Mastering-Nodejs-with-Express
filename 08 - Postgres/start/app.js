@@ -2,6 +2,14 @@ const express = require('express');
 const morgan = require('morgan');
 
 const productRoutes = require('./routes/products');
+const { connect, sync } = require('./config/database');
+
+// Connecting and syncing the database
+async function initializeDatabase() {
+  await connect();
+  await sync();
+}
+initializeDatabase();
 
 const app = express();
 
