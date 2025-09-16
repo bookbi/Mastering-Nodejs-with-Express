@@ -1,49 +1,51 @@
 const express = require('express');
-
-const { data } = require('../data');
+const Product = require('../models/products');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.send(data);
+const { data } = require('../data');
+
+// GET all products
+// routes/products.js
+router.get('/', async (req, res) => {
+  const products = await Product.findAll();
+  res.json(products); // เดิมเป็น res.json(data)
 });
 
-router.get('/:id', (req, res) => {
-  const productId = Number.parseInt(req.params.id);
-  const product = data.find((product) => product.id === productId);
+
+// GET product by id
+router.get('/:id', async (req, res) => {
+  const product = await Product.findOne({ where: { id: req.params.id } });
+  if (!product) return res.status(404).json({ error: 'Product not found' });
   res.json(product);
 });
 
-let currentProductId = 9;
-router.post('/', (req, res) => {
+// POST create product
+router.post('/', async (req, res) => {
   const { name, imageURL, type } = req.body;
-  const product = {
-    id: ++currentProductId,
-    name,
-    imageURL,
-    type
-  };
-  data.push(product);
+  const newProduct = await Product.create({ name, imageURL, type });
+  res.status(201).json(newProduct);
+});
+
+// PUT update product
+router.put('/:id', async (req, res) => {
+  const product = await Product.findOne({ where: { id: req.params.id } });
+  if (!product) return res.status(404).json({ error: 'Product not found' });
+
+  product.name = req.body.name ?? product.name;
+  product.imageURL = req.body.imageURL ?? product.imageURL;
+  product.type = req.body.type ?? product.type;
+
+  await product.save();
   res.json(product);
 });
 
-router.put('/:id', (req, res) => {
-  const { name, imageURL, type } = req.body;
-  const productId = Number.parseInt(req.params.id);
-  const product = data.find((product) => product.id === productId);
 
-  product.name = name;
-  product.imageURL = imageURL;
-  product.type = type;
-
-  res.json(product);
-});
-
-router.delete('/:id', (req, res) => {
-  const productId = Number.parseInt(req.params.id);
-  const productIndex = data.findIndex((product) => product.id === productId);
-  data.splice(productIndex, 1);
-  res.sendStatus(204);
+// DELETE product
+router.delete('/:id', async (req, res) => {
+  const deleted = await Product.destroy({ where: { id: req.params.id } });
+  if (!deleted) return res.status(404).json({ error: 'Product not found' });
+  res.json({ message: 'Product deleted successfully' });
 });
 
 module.exports = router;

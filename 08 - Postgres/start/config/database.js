@@ -1,12 +1,15 @@
+// config/database.js
 const { Sequelize } = require('sequelize');
+require('dotenv').config();
 
 const sequelize = new Sequelize(
-  'mastering-nodejs-with-express',
-  'postgres',
-  'postgres',
+  process.env.DB_NAME || 'mastering-nodejs-with-express',
+  process.env.DB_USER || 'postgres',
+  process.env.DB_PASS || '262005',
   {
-    host: 'localhost',
-    dialect: 'postgres'
+    host: process.env.DB_HOST || 'localhost',
+    port: Number(process.env.DB_PORT || 5432),
+    dialect: 'postgres',
   }
 );
 
@@ -28,8 +31,4 @@ async function sync() {
   }
 }
 
-module.exports = {
-  sequelize,
-  connect,
-  sync
-};
+module.exports = { sequelize, connect, sync };
