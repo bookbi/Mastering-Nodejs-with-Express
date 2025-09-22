@@ -6,4 +6,7 @@ jobs:
       runs-on: ubuntu-latest
       step:
        - name: my-step
-         run: echo "Hello World!"
+         uses: action/checkout@v2
+
+       - name: print text from file index
+         run: cat dist/index.js
